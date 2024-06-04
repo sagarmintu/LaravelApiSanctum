@@ -15,6 +15,7 @@ use App\Http\Controllers\UserController;
 // Route::get('/student/search/{city}', [StudentController::class, 'search']);
 
 Route::post('/register', [UserController::class, 'register']);
+Route::post('/login', [UserController::class, 'login']);
 
 // Protected Routes
 
@@ -26,5 +27,6 @@ Route::middleware(['auth:sanctum'])->group(function () {
     Route::put('/student/{id}', [StudentController::class, 'update']);
     Route::delete('/student/{id}', [StudentController::class, 'destroy']);
     Route::get('/student/search/{city}', [StudentController::class, 'search']);
-    
+    Route::post('/logout', [UserController::class, 'logout']);
+
 });

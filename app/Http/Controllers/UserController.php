@@ -11,9 +11,9 @@ class UserController extends Controller
     public function register(Request $request)
     {
         $request->validate([
-            'name' =>'required',
-            'email' =>'required|email',
-            'password' =>'required|confirmed',
+            'name' => 'required',
+            'email' => 'required|email',
+            'password' => 'required|confirmed',
         ]);
 
         $user = User::create([
@@ -22,11 +22,43 @@ class UserController extends Controller
             'password' => Hash::make($request->password),
         ]);
 
-        $token = $user->createToken('myToken')->plainTextToken;
+        $token = $user->createToken($request->name)->plainTextToken;
 
         return response([
             'user' => $user,
             'token'=> $token
         ], 201);
+    }
+
+    public function logout()
+    {
+        auth()->user()->tokens()->delete();
+        return response([
+            'message' => 'User Logged Out Successfully'
+        ]);
+    }
+
+    public function login(Request $request)
+    {
+        $request->validate([
+            'email' => 'required|email',
+            'password' => 'required',
+        ]);
+
+        $user = User::where('email', $request->email)->first();
+
+        if(!$user || !Hash::check($request->password, $user->password))
+        {
+            return response([
+                'message' => 'The Provided Credentials Are Incorrect.'
+            ], 401);
+        }
+
+        $token = $user->createToken('$request->name')->plainTextToken;
+
+        return response([
+            'user' => $user,
+            'token'=> $token
+        ], 200);
     }
 }
